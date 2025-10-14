@@ -3,16 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>案件情報入力</title>
+    <title>顧客情報確認（編集）</title>
     <!-- Bootstrap CSSの読み込み -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
     <div class="container mt-5">
         <!-- ここにHTMLを書く -->
+<h2 class="mb-4">顧客情報確認</h2>
+<table class="table table-bordered">
+  <tbody>
+    <tr><th>会社名</th><td id="confirmCompany"></td></tr>
+    <tr><th>業種</th><td id="confirmIndustry"></td></tr>
+    <tr><th>連絡先</th><td id="confirmContact"></td></tr>
+    <tr><th>所在地</th><td id="confirmLocation"></td></tr>
+  </tbody>
+</table>
+<button id="submitBtn" class="btn btn-primary">更新</button>
+<button id="backBtn" class="btn btn-secondary">戻る</button>
+
+
     </div>
     <script type="module">
-        <!-- ここにJSを書く -->
+        
+import config from '../config.js';
+
+// 編集データ取得
+const editData = JSON.parse(sessionStorage.getItem('editCustomerData'));
+
+if(!editData){
+    alert("編集データが存在しません");
+    window.location.href = 'index.html';
+}
+
+// データ表示
+document.getElementById('confirmCompany').textContent = editData.companyName;
+document.getElementById('confirmIndustry').textContent = editData.industry;
+document.getElementById('confirmContact').textContent = editData.contact;
+document.getElementById('confirmLocation').textContent = editData.location;
+
+// 戻るボタン
+document.getElementById('backBtn').addEventListener('click', () => {
+    window.location.href = `update.html?id=${editData.customerId}`;
+});
+
+// 登録ボタン
+document.getElementById('submitBtn').addEventListener('click', () => {
+    fetch(`${config.apiUrl}/customers/${editData.customerId}`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(editData)
+    })
+    .then(res => res.json())
+    .then(result => {
+        if(result.success){
+            alert("更新しました");
+            sessionStorage.removeItem('editCustomerData');
+            window.location.href = `detail.html?id=${editData.customerId}`;
+        } else {
+            alert("更新に失敗しました");
+        }
+    })
+    .catch(err => console.error(err));
+});
+
     </script>
     <!-- BootstrapのJavaScriptの読み込み -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>

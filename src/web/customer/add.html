@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
@@ -27,7 +29,7 @@
                 <label for="location">所在地:</label>
                 <input type="text" class="form-control" id="location" name="location" required>
             </div>
-            <button type="submit" class="btn btn-primary">送信</button>
+            <button id="submit-button" class="btn btn-primary">登録</button>
         </form>
     </div>
     <script type="module">
@@ -35,7 +37,14 @@
 
         document.getElementById('customer-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            const formData = new FormData(this);
+
+        const formData = new FormData(this);
+        const params = new URLSearchParams([...formData]).toString();
+        window.location.href = `add-confirm.html?${params}`;
+        });
+
+
+ /*     const formData = new FormData(this);
             fetch(config.apiUrl + '/add-customer', {
                 method: 'POST',
                 headers: {
@@ -52,8 +61,8 @@
                     alert('保存に失敗しました。');
                 }
               })
-              .catch(error => console.error('Error:', error));
-        });
+              .catch(error => console.error('Error:', error)); */
+
     </script>
     <!-- BootstrapのJavaScriptの読み込み -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>

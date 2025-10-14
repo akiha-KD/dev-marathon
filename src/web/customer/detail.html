@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Detail</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container mt-5">
+    <h1>顧客詳細</h1>
+    <table class="table table-bordered">
+      <tbody id="detail-table"></tbody>
+    </table>
+
+    <a id="edit-btn" class="btn btn-warning" href="#">編集</a>
+    <button id="delete-btn" class="btn btn-danger">削除</button>
+    <a href="./list.html" class="btn btn-secondary">戻る</a>
+  </div>
+
+  <script type="module">
+    import config from "../config.js";
+
+    const params = new URLSearchParams(window.location.search);
+    const customer_id = params.get('id');
+
+    fetch(`${config.apiUrl}/customers/${encodeURIComponent(customer_id)}`)
+      .then(res => res.json())
+      .then(data => {
+        const table = document.getElementById('detail-table');
+
+        const fields = [
+          { label: 'Company_name', value: data.company_name },
+          { label: 'industry', value: data.industry },
+          { label: 'Contact', value: data.contact },
+          { label: 'location', value: data.location }
+        ];
+
+        fields.forEach(field => {
+          const row = document.createElement('tr');
+          row.innerHTML = `<th>${field.label}</th><td>${field.value}</td>`;
+          table.appendChild(row);
+        });
+
+        // 編集リンクに contact を付加
+        document.getElementById('edit-btn').href = `update.html?id=${encodeURIComponent(data.customer_id)}`;
+      
+      })
+      .catch(err => {
+        console.error(err);
+        alert('詳細情報の取得に失敗しました。');
+      });
+
+      // 削除ボタンの処理
+    document.getElementById('delete-btn').addEventListener('click', () => {
+  alert('削除していいですか？'); // 指示通り alert を表示
+
+  // 削除処理を続けて実行
+  fetch(`${config.apiUrl}/customers/${encodeURIComponent(customer_id)}`, {
+    method: 'DELETE'
+  })
+  .then(res => res.json())
+  .then(result => {
+    if (result.success) {
+      alert('削除が完了しました。');
+      window.location.href = 'list.html';
+    } else {
+      alert('削除に失敗しました。');
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    alert('通信エラーが発生しました。');
+  });
+});
+
+
+  </script>
+</body>
+</html>
