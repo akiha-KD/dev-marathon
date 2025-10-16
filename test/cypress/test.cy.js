@@ -18,7 +18,7 @@ describe('顧客情報入力フォームのテスト', () => {
     // 確認ページに遷移するはずなので、そのURLを確認
     cy.url({ timeout: 10000 }).should('include', 'add-confirm.html');
 
-    cy.window().then((win) => {
+    cy.window().then((win) => {3
     // windowのalertをスタブ化し、エイリアスを設定
       cy.stub(win, 'alert').as('alertStub');
     });
