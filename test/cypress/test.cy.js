@@ -31,7 +31,6 @@ describe('顧客情報入力フォームのテスト', () => {
   });
 
 
-
 describe('顧客情報入力フォーム入力済みの値確認テスト', () => {
   it('入力・登録した会社名と連絡先が一覧画面に表示されることを確認する', () => {
     cy.visit('/akiha_kadohama/customer/add.html'); // 入力ページにアクセス
@@ -75,39 +74,59 @@ describe('顧客情報入力フォーム入力済みの値確認テスト', () =
 
   });
   });
+  it('登録した顧客を詳細画面で削除し、一覧に表示されないことを確認する', () => {
+    let uniqueCompanyName;
+    let uniqueContactNumber;
 
-  describe('顧客情報削除のテスト', () => {
-  it('一覧画面で登録済みの顧客情報を削除し、表示されていないことを確認する', () => {
-    // フィクスチャから登録済みのデータを取得
+    // fixtureから基本データを取得して登録
     cy.fixture('customerData').then((data) => {
-      const targetCompanyName = data.companyName;
+      uniqueCompanyName = `テスト会社_${Date.now()}`;
+      uniqueContactNumber = `03-${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}`;
 
-      // 一覧画面にアクセス
+      // 登録ページにアクセス
+      cy.visit('/akiha_kadohama/customer/add.html');
+
+      cy.get('#companyName', { timeout: 10000 }).should('exist').type(uniqueCompanyName);
+      cy.get('#industry').should('exist').type(data.industry);
+      cy.get('#contact').should('exist').type(uniqueContactNumber);
+      cy.get('#location').should('exist').type(data.location);
+
+      // フォーム送信
+      cy.get('#customer-form').submit();
+
+      // alert スタブ化して保存完了確認
+      cy.window().then((win) => {
+        cy.stub(win, 'alert').as('saveAlert');
+      });
+      cy.get('#save-btn').click();
+      cy.get('@saveAlert').should('have.been.calledWith', '保存が完了しました！');
+
+      // 少し待機して一覧画面に遷移
+      cy.wait(500);
       cy.visit('/akiha_kadohama/customer/list.html');
 
-      // 会社名が一覧に表示されていることを確認
-      cy.contains(targetCompanyName).should('exist');
+      // 登録された会社名と連絡先が表示されていることを確認
+      cy.contains('#customer-list tr', uniqueCompanyName).should('exist');
+      cy.contains('#customer-list tr', uniqueContactNumber).should('exist');
 
-      // alertをスタブ化
+      // 詳細ページへ移動
+      cy.contains('#customer-list tr a', uniqueCompanyName).click();
+
+      // 削除ボタン押下
       cy.window().then((win) => {
-        cy.stub(win, 'alert').as('alertStub');
+        cy.stub(win, 'alert').as('deleteAlert');
       });
+      cy.get('#delete-btn').click();
 
-      // 対象行の削除ボタンをクリック（会社名の行にある削除ボタンを想定）
-      cy.contains('tr', targetCompanyName) // 対象の行を特定
-        .within(() => {
-          cy.get('.delete-btn').click();
-        });
+      // 削除完了アラートを確認
+      cy.get('@deleteAlert').should('have.been.calledWith', '削除が完了しました！');
 
-      // 削除完了のアラートを確認
-      cy.get('@alertStub').should('have.been.calledWith', '削除が完了しました！');
-
-      // ページをリロードして、対象データが消えていることを確認
-      cy.reload();
-      cy.contains(targetCompanyName).should('not.exist');
+      // 削除後、一覧画面で存在しないことを確認
+      cy.url().should('include', '/akiha_kadohama/customer/list.html');
+      cy.contains('#customer-list tr', uniqueCompanyName).should('not.exist');
+      cy.contains('#customer-list tr', uniqueContactNumber).should('not.exist');
     });
   });
-});
 
-  });
+    });
 
