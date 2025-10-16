@@ -1,5 +1,5 @@
 const config = {
-  apiUrl: 'http://localhost:5238'
+  apiUrl: '/api_akiha_kadohama'
 };
 
 export default config;
