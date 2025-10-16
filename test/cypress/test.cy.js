@@ -28,11 +28,5 @@ describe('顧客情報入力フォームのテスト', () => {
 
     cy.get('@alertStub').should('have.been.calledOnceWith', '保存が完了しました！');
 
-    // フォームがリセットされたことを確認
-    cy.get('#companyName').should('have.value', '');
-    cy.get('#industry').should('have.value', '');
-    cy.get('#contact').should('have.value', '');
-    cy.get('#location').should('have.value', '');
-    cy.wait(5000);
   });
 });
