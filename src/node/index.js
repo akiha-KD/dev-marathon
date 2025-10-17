@@ -1,5 +1,3 @@
-require('dotenv').config(); // ← 追加
-
 
 const express = require("express");
 const app = express();
@@ -15,6 +13,7 @@ const port = process.env.PORT || 5238;
 const cors = require("cors");
 app.use(cors());
 
+require('dotenv').config({ path: '../../.env' });  // ← 追加
 
 const { Pool } = require("pg");
 const pool = new Pool({
@@ -48,10 +47,6 @@ app.get("/customers", async (req, res) => {
 });
 
 
-
-
-
-
 app.post("/customer/add-customer", async (req, res) => {
  try {
    const { companyName, industry, contact, location } = req.body;
@@ -65,8 +60,6 @@ app.post("/customer/add-customer", async (req, res) => {
    res.json({ success: false });
  }
 });
-
-
 
 
 // 顧客IDで詳細を取得するエンドポイント
