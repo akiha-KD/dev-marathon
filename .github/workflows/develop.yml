@@ -16,3 +16,4 @@ jobs:
           SSH_KEY: ${{ secrets.DEV_SSHE_SSH_KEY }}
       - run: ssh ${{ steps.ssh.outputs.SERVER }} bash /app/akiha_kadohama/deploy.sh akiha_kadohama				
 
+
