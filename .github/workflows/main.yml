@@ -26,6 +26,8 @@ jobs:
         run: ssh ${{ steps.ssh.outputs.SERVER }} "bash /app/akiha_kadohama/deploy.sh akiha_kadohama"
 
       # Cypress 実行（ローカル）
+        # working-directory: ./ci
       - name: Run Cypress tests
-        working-directory: ./ci
-        run: npx cypress run --browser chrome --spec "cypress/e2e/akiha_kadohama.*"
+        run: |
+          cd /ci
+          npx cypress run --browser chrome --spec "cypress/e2e/akiha_kadohama.*"
