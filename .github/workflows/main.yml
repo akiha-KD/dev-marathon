@@ -27,8 +27,7 @@ jobs:
 
       # Cypress 実行（ローカル）
         # working-directory: ./ci
-      - name: Run Cypress tests
+      - name: Run Cypress tests on remote server
         run: |
-          ssh ${{ steps.ssh.outputs.SERVER }}
-          cd /ci
-          npx cypress run --browser chrome --spec "cypress/e2e/akiha_kadohama.*"
+          ssh ${{ steps.ssh.outputs.SERVER }} "cd /ci && npx cypress run --browser chrome --spec 'cypress/e2e/akiha_kadohama.*'"
+
