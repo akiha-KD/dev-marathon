@@ -1,0 +1,31 @@
+name: ssh command
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      # リポジトリのチェックアウト
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # SSH 接続
+      - id: ssh
+        uses: invi5H/ssh-action@v1
+        with:
+          SSH_HOST: ${{ secrets.DEV_SSH_HOST }}
+          SSH_PORT: ${{ secrets.DEV_SSH_PORT }}
+          SSH_USER: ${{ secrets.DEV_SSH_USER }}
+          SSH_KEY: ${{ secrets.DEV_SSHE_SSH_KEY }}
+
+      # リモートで deploy.sh 実行
+      - name: Run deploy script
+        run: ssh ${{ steps.ssh.outputs.SERVER }} "bash /app/akiha_kadohama/deploy.sh akiha_kadohama"
+
+      # Cypress 実行（ローカル）
+      - name: Run Cypress tests
+        working-directory: ./ci
+        run: npx cypress run --browser chrome --spec "cypress/e2e/akiha_kadohama.*"
