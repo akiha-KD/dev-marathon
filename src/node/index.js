@@ -1,21 +1,30 @@
+require('dotenv').config(); // ← 追加
+
 const express = require("express");
 const app = express();
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-const port = 5238;
+/*const port = 5238;*/
+const port = process.env.PORT || 5238;
 
 const cors = require("cors");
 app.use(cors());
 
 const { Pool } = require("pg");
 const pool = new Pool({
-  user: "user_akiha_kadohama",                                                                                 
-  host: "localhost",                                                                                            
-  database: "db_akiha_kadohama",                                                                                
+  user: process.env.POSTGRES_USER,         
+  host: process.env.POSTGRES_HOST,         
+  database: process.env.POSTGRES_DB,       
+  password: process.env.POSTGRES_PASSWORD, 
+  port: process.env.POSTGRES_PORT || 5432,
+/*  user:"user_akiha_kadohama",                                                            
+  host:"localhost",                                                                 
+  database:"db_akiha_kadohama",     
   password: "5Rw5YDaWc5jc",
   port: 5432,
+  */
 });
 
 app.listen(port, () => {
