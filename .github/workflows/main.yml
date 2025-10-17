@@ -29,5 +29,6 @@ jobs:
         # working-directory: ./ci
       - name: Run Cypress tests
         run: |
+          ssh ${{ steps.ssh.outputs.SERVER }}
           cd /ci
           npx cypress run --browser chrome --spec "cypress/e2e/akiha_kadohama.*"
