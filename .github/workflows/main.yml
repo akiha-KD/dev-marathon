@@ -28,6 +28,6 @@ jobs:
       # Cypress 実行（ローカル）
         # working-directory: ./ci
       - name: Run Cypress tests
-        script: |
+        run: |
           cd /ci
           npx cypress run --browser chrome --spec "cypress/e2e/akiha_kadohama.*"
